@@ -46,7 +46,12 @@ void Cache::del(key_type key) {
 }
 
 Cache::size_type Cache::space_used() const{
-    
+    Cache::size_type size = 0;
+    for (std::pair<Cache::key_type, Cache::val_type> element : pImpl->dict)
+    {
+    	size += sizeof(element.second);
+    }
+    return size;
 }
 
 void Cache::reset() {
