@@ -5,7 +5,7 @@ OBJ=$(SRC:.cc=.o)
 
 all:  cache_test
 
-cache_test: cache.o cache_test.o
+cache_test: cache_lib.o cache_test.o
 	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o: %.cc %.hh
