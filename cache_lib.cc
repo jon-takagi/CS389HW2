@@ -5,7 +5,7 @@ Cache::Impl{
     public:
         std::unordered_map<Cache::key_type, Cache::val_type> dict = {};
         size_type size = 0;
-         
+
         Impl::Impl()
         {
            dict = {};
@@ -26,7 +26,7 @@ void Cache::set(key_type key, val_type val, index_type size) {
         while(val[i] != '\0'){ //Searching for null terminator
             entry_val[i] = val[i];
         }
-        pImpl->dict[key] = entry_val;
+        pImpl->dict.insert({key,entry_val});
         pImpl->size += size;
     }
 }
@@ -36,8 +36,19 @@ return null;
 }
 
 void Cache::del(key_type key) {
-
+    val_type val=pImpl->dict[key];
+    int size = 0;
+    while(val[size] != '\0'){ //Searching for null terminator
+        size += 1;
+    }
+    pImpl->size -= size;
+    pImpl->dict.erase(key);
 }
-Cache::index_type Cache::space_used() const{
-return null;
+
+Cache::size_type Cache::space_used() const{
+    
+}
+
+void Cache::reset() {
+
 }
