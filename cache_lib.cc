@@ -55,5 +55,5 @@ Cache::size_type Cache::space_used() const{
 }
 
 void Cache::reset() {
-
+    pImpl->dict.erase(pImpl->dict.begin(), pImpl->dict.end());
 }
