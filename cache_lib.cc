@@ -3,18 +3,13 @@
 
 Cache::Impl{
     public:
-        std::unordered_map<Cache::key_type, Cache::val_type> dict = {};
-        size_type size = 0;
-         
-        Impl::Impl()
-        {
-           dict = {};
-           size = 0;
-        }
+        std::unordered_map<Cache::key_type, Cache::val_type> dict;
+        size_type size;
 };
 
 Cache::Cache(index_type maxmem, evictor_type evictor = [](){ return 0; }, hash_func hasher = std::hash<std::string>()){
-return null;
+    Impl->dict = {};
+    Impl->size = 0;
 }
 
 //Basic version: Allows setting of key only when there's enough size, otherwise rejects
