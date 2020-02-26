@@ -3,7 +3,7 @@
 #include "cache.hh"
 
 
-using entry_type = std::pair<Cache::val_type, Cache::size_type> //To better track size for entries
+using entry_type = std::pair<Cache::val_type, Cache::size_type>; //To better track size for entries
 
 class Cache::Impl{
     public:
@@ -26,8 +26,8 @@ Cache::Cache(size_type maxmem,float max_load_factor, Evictor* evictor, hash_func
 Cache::~Cache() {
 
 }
-//Basic version: Allows setting of key only when there's enough size, otherwise rejects
-//Then copies by iterating over val to make new entry to put into pImpl_ dict
+// Basic version: Allows setting of key only when there's enough size, otherwise rejects
+// Then copies by iterating over val to make new entry to put into pImpl_ dict
 // void Cache::set(key_type key, val_type val, size_type size) {
     // if(pImpl_->size_ + size <= pImpl_->maxmem_){
     //     val_type entry_val[size];
