@@ -1,7 +1,8 @@
 #include "widget.h"
 #include <memory>
 class widget::Impl {
-    int id;
+    private:
+        int id;
     public:
         Impl(int id) {
             set_id(id);
