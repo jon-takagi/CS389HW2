@@ -62,7 +62,6 @@ Cache::size_type Cache::space_used() const{
 }
 
 void Cache::reset() {
-    //jon you write this
-    //just delete everything
-    Impl->size = 0;
+    pImpl->dict.erase(pImpl->dict.begin(), pImpl->dict.end());
+    pImpl->size = 0;
 }
