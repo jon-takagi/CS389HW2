@@ -14,7 +14,7 @@ class widget::Impl {
         }
 };
 widget::widget(int id) : pImpl(std::unique_ptr<Impl>()) {
-    // pImpl->set_id(id);
+
 }
 widget::~widget() = default;// or =default
 int widget::get_id() {
