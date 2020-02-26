@@ -1,5 +1,6 @@
 //Testing File for Cache
 //Tests are written using the Catch2 Framework and will be described in the README
+#include <iostream>
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -15,8 +16,11 @@ TEST_CASE("Setting and Getting elements.") //basic rejection
     test_cache.set("key_three", "rejected", 9);
     
     //Confirm these were added or rejected as expected
-    REQUIRE(test_cache.get("key_one", 8) == "value_1");
-    REQUIRE(test_cache.get("key_two", 8) == "value_2");
-    REQUIRE(test_cache.get("key_three", 9) == nullptr);
+    Cache::size_type size;
+    Cache::val_type val1 = "value_1";
+    Cache::val_type val2 = "value_2";
+    REQUIRE(*test_cache.get("key_one", size) == *val1);
+    REQUIRE(*test_cache.get("key_two", size) == *val2);
+    REQUIRE(test_cache.get("key_three", size) == nullptr);
     
 }
