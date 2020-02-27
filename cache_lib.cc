@@ -32,6 +32,10 @@ Cache::~Cache() {
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
 void Cache::set(key_type key, val_type val, size_type size) {
 // TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
+    if(pImpl_->dict_.find(key) != pImpl_->dict_.end()) {
+        // std::cout << "overwriting existing key" << std::endl;
+        del(key);
+    }
     if(pImpl_->size_ + size <= pImpl_->maxmem_){
         byte_type *copy = new byte_type[size];
         int i = 0;
@@ -40,8 +44,9 @@ void Cache::set(key_type key, val_type val, size_type size) {
             i++;
         }
         val_type entry_val = copy;
-        entry_type entry = std::make_pair(entry_val, size);
-        pImpl_->dict_.insert(std::make_pair(key, entry));
+        pImpl_->dict_.insert(std::make_pair(key, std::make_pair(entry_val, size)));
+        // need to free copy
+        // delete[] pImpl_->dict_[key].second.first
         pImpl_->size_ += size;
     }
 }
@@ -68,9 +73,9 @@ Cache::size_type Cache::space_used() const{
 
 //del-s all elements, since del frees the memory used
 void Cache::reset() {
-    for ( auto entry = pImpl_->dict_.begin(); entry != pImpl_->dict_.end(); ++entry ){
-        // del(entry->first);
-        std::cout << entry->first << std::endl;
-        // del(entry->first);   
+    for (auto i: pImpl_->dict_) {
+        delete[] i.second.first;
     }
+    pImpl_->dict_.clear();
+    pImpl_->size_ = 0;
 }
