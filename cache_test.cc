@@ -72,11 +72,55 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
         test_cache.get("key_three", size);
         REQUIRE(size == 17);        
         
+        
         //Overwrite some entries and cofirm size changes as expected
+        test_cache.set("key_one", "size now at 42", 15);
+        REQUIRE(test_cache.space_used() == 42);
+        test_cache.get("key_one", size);
+        REQUIRE(size == 15);  
+
+        test_cache.set("key_two", "size now at 47", 15);
+        REQUIRE(test_cache.space_used() == 47);
+        test_cache.get("key_two", size);
+        REQUIRE(size == 15);   
+       
         
     }
     
     SECTION("Testing Delete and Reset."){
+        
+        auto test_cache = Cache(100);
+        Cache::size_type size = 0; //Set up size to access; we expect this to remain unchanged since we are calling get for empty/non-existent entries
+        
+        //Add some values to begin with
+        test_cache.set("key_one", "value_1", 8);
+        test_cache.set("key_two", "value_2", 8);
+        test_cache.set("key_three", "value_3", 8);
+        
+        //Remove values one at a time, checking that they now return nullptr
+        test_cache.del("key_one");
+        REQUIRE(test_cache.get("key_one", size) == nullptr);
+        
+        test_cache.del("key_two");
+        REQUIRE(test_cache.get("key_two", size) == nullptr);
+        
+        test_cache.del("key_three");
+        REQUIRE(test_cache.get("key_three", size) == nullptr);
+        
+        //confirm size zero
+        REQUIRE(test_cache.space_used() == 0);
+        
+        //fill the cache again
+        test_cache.set("key_one", "value_1", 8);
+        test_cache.set("key_two", "value_2", 8);
+        test_cache.set("key_three", "value_3", 8);
+        
+        //reset the cache, then confirm all entries nullptr and size is zero
+        test_cache.reset();
+        REQUIRE(test_cache.get("key_one", size) == nullptr);
+        REQUIRE(test_cache.get("key_two", size) == nullptr);
+        REQUIRE(test_cache.get("key_three", size) == nullptr);
+        REQUIRE(test_cache.space_used() == 0);
         
     }
     
