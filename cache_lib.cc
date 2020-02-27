@@ -2,6 +2,7 @@
 #include <tuple>
 #include "cache.hh"
 
+#include <iostream>
 
 using entry_type = std::pair<Cache::val_type, Cache::size_type>; //To better track size for entries
 
@@ -25,10 +26,12 @@ Cache::Cache(size_type maxmem,float max_load_factor, Evictor* evictor, hash_func
 
 Cache::~Cache() {
   //call reset on cache
+  reset();
 }
 // Basic version: Allows setting of key only when there's enough size, otherwise rejects
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
 void Cache::set(key_type key, val_type val, size_type size) {
+// TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
     if(pImpl_->size_ + size <= pImpl_->maxmem_){
         byte_type *copy = new byte_type[size];
         int i = 0;
@@ -48,10 +51,13 @@ Cache::val_type Cache::get(key_type key, size_type& val_size) const {
     val_size = pImpl_->dict_[key].second;
     return pImpl_->dict_[key].first;
 }
-
+//frees the memory used when a key is deleted from memory.
 bool Cache::del(key_type key) {
+    if(pImpl_->dict_.find(key) == pImpl_->dict_.end()) {
+        return false;
+    }
     pImpl_->size_ -= pImpl_->dict_[key].second;
-    delete pImpl_->dict_[key].first;
+    delete[] pImpl_->dict_[key].first;
     pImpl_->dict_.erase(key);
     return true;
 }
@@ -60,8 +66,11 @@ Cache::size_type Cache::space_used() const{
     return pImpl_->size_;
 }
 
-//Need to delete values, or call del on everything
+//del-s all elements, since del frees the memory used
 void Cache::reset() {
-    pImpl_->dict_.erase(pImpl_->dict_.begin(), pImpl_->dict_.end());
-    pImpl_->size_ = 0;
+    for ( auto entry = pImpl_->dict_.begin(); entry != pImpl_->dict_.end(); ++entry ){
+        // del(entry->first);
+        std::cout << entry->first << std::endl;
+        // del(entry->first);   
+    }
 }

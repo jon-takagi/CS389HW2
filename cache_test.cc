@@ -7,7 +7,7 @@
 
 TEST_CASE("Testing Basic Cache Operations") //basic rejection
 {
-    
+
     SECTION("Setting and Getting elements."){
     
         //Make a cache with plenty of space for first test
@@ -137,5 +137,4 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
     
     
     
-    
-    
+   
