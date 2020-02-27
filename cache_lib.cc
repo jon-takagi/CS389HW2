@@ -2,6 +2,7 @@
 #include <tuple>
 #include "cache.hh"
 
+#include <iostream>
 
 using entry_type = std::pair<Cache::val_type, Cache::size_type>; //To better track size for entries
 
@@ -25,7 +26,7 @@ Cache::Cache(size_type maxmem,float max_load_factor, Evictor* evictor, hash_func
 
 Cache::~Cache() {
   //call reset on cache
-  // reset();
+  reset();
 }
 // Basic version: Allows setting of key only when there's enough size, otherwise rejects
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
@@ -65,9 +66,11 @@ Cache::size_type Cache::space_used() const{
     return pImpl_->size_;
 }
 
-//change to del-ing all elements, since del frees the memory used
+//del-s all elements, since del frees the memory used
 void Cache::reset() {
     for ( auto entry = pImpl_->dict_.begin(); entry != pImpl_->dict_.end(); ++entry ){
-        del(entry->first);
+        // del(entry->first);
+        std::cout << entry->first << std::endl;
+        // del(entry->first);   
     }
 }
