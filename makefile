@@ -5,7 +5,7 @@ OBJ=$(SRC:.cc=.o)
 
 all: main.bin
 
-cache_test: cache_lib.o cache_test.o
+main.bin: cache_lib.o cache_test.o
 	$(CXX) $(LDFLAGS) -o $@ $^
 
 %.o: %.cc %.hh
@@ -13,3 +13,6 @@ cache_test: cache_lib.o cache_test.o
 
 clean:
 	-rm *.o $(objects)
+
+touch:
+	find . -type f -exec touch {} +

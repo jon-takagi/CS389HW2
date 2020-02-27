@@ -36,7 +36,7 @@ void Cache::set(key_type key, val_type val, size_type size) {
         // std::cout << "overwriting existing key" << std::endl;
         del(key);
     }
-    if(pImpl_->size_ + size <= pImpl_->maxmem_){
+    if(space_used() + size <= pImpl_->maxmem_){
         byte_type *copy = new byte_type[size];
         int i = 0;
         while(val[i] != '\0'){ //Searching for null terminator
@@ -48,6 +48,9 @@ void Cache::set(key_type key, val_type val, size_type size) {
         // need to free copy
         // delete[] pImpl_->dict_[key].second.first
         pImpl_->size_ += size;
+    } else {
+        // handle evictions
+        // pImpl_->evictor_.do_stuff();
     }
 }
 
