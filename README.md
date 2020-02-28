@@ -6,7 +6,7 @@
 Our cache uses an `unordered_map` as the underlying data type. Rather than directly storing key-value pairs in the map, we store key-(value-size) pairs. The `maxmem`, `size`, and `evictor` are stored as member variables, and the `max_load_factor` and `hasher` are members of the `unordered_map`
 
 ### Deconstructor
-Because of the way we create the `char*` in set, the memory must be freed using `delete[]`. The `reset` method also frees the memory allocated to the array, so to avoid duplicating code we call it in the destructor. There are no other members with non-trivial destructors, so no other code needs to be called.
+Because of the way we create the `char*` in the `set` method, the memory must be freed using `delete[]`. The `reset` method also frees the memory allocated to the array, so to avoid duplicating code we call it in the destructor. There are no other members with non-trivial destructors, so no other code needs to be called.
 
 ### Set
 In order to deep-copy the value into the cache when we `set` it, we must iterate over each character in the value and store it in the new value. Because variable sized arrays are illegal in C++, we instead create a pointer to a variable number of spaces on the heap, a very different construction. Since we allocated heap memory for the deep copy, we must free it but not until the key is `del`-ed.
