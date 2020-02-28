@@ -32,12 +32,12 @@ Cache::~Cache() {
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
 void Cache::set(key_type key, val_type val, size_type size) {
 // TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
-/*
+
     if(pImpl_->dict_.find(key) != pImpl_->dict_.end()) {
         // std::cout << "overwriting existing key" << std::endl;
         del(key);
     }
-    */
+    
     if(space_used() + size <= pImpl_->maxmem_){
         byte_type *copy = new byte_type[size];
         int i = 0;

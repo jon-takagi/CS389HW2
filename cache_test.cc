@@ -6,6 +6,8 @@
 #include "catch.hpp"
 #include "cache.hh"
 
+using key_type = std::string;
+
 TEST_CASE("Testing Basic Cache Operations") //basic rejection
 {
 
@@ -126,12 +128,83 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
         REQUIRE(test_cache.get("key_three", size) == nullptr);
         REQUIRE(test_cache.space_used() == 0);
     }
-
-
-
 }
 
-
+TEST_CASE("Hash Function")
+{
+    
+    //We define a Functor to pass as the hash function, so that it can record when and what it is called with
+    //It keeps track of the inputs and outputs in arrays, so we can check that it was called, with the expected
+    //key and getting the expected result
+    class HashFunctor {
+        private:
+            Cache::hash_func function_;
+            std::vector<key_type> inputs_;
+            std::vector<std::size_t> outputs_;
+        public:
+            HashFunctor(Cache::hash_func func){
+                function_ = func;
+            }
+        
+            Cache::size_type operator () (key_type key){
+                auto ret = function_(key);
+                outputs_.push_back(ret);
+                inputs_.push_back(key);
+                if(!inputs_.empty())std::cout << "not empty \n"; 
+                return ret;
+            }
+            
+            //Get the last entry in outputs_, which should be the return of the most recent call
+            std::pair<key_type, std::size_t> most_recent(){
+                //std::cout << inputs_.back();
+                if(inputs_.empty())std::cout << "is now empty \n"; 
+                auto k = inputs_.front();
+                return std::make_pair(k, 1);
+                //return std::make_pair(inputs_.back(), outputs_.back());
+            }
+    };
+    /*
+    //First test, making a bad hash function that hashes everything to the same value
+    std::function<std::size_t(key_type)> lam1 = [](key_type k) {return (k == "key_0");};//avoid compiler warnings while "always" returning 0
+    auto *bad_hash = new HashFunctor(lam1);
+    auto test_cache = Cache(100, 0.75, nullptr, *bad_hash);
+    
+    
+    //Then set a few times and confirm that our functor was called on these
+    test_cache.set("key_one", "value_1", 8);    
+    REQUIRE((bad_hash->most_recent()).first == "key_one"); 
+    //REQUIRE(bad_hash.most_recent().second == 1); 
+    test_cache.set("key_two", "value_2", 8);
+  //  REQUIRE(bad_hash.most_recent().first == "key_two"); 
+   // REQUIRE(bad_hash.most_recent().second == 1); 
+    test_cache.set("key_three", "value_3", 8);
+  //  REQUIRE(bad_hash.most_recent().first == "key_three"); 
+   // REQUIRE(bad_hash.most_recent().second == 1); 
+    */
+    
+    //make a better hash and repeat
+}
+    
+    
+    //create cache with 1 functor
+    //call set 3 times
+    //confirm functor has expected stuff
+    //repeated for 1-2 other functions
+    
+    
 //Test Hash and load factor
 
 //Test Eviction
+
+
+
+
+
+
+
+
+
+
+
+
+
