@@ -34,5 +34,7 @@ The makefile we use is fairly boilerplate, however, due to time issues with my v
 ## Part 3: Performance
 ## Part 4: Collision Resolution
 ## Part 5: Dynamic Resizing
+The C++ standard library again handles this part of the project for us, as `unordered_map` simply has a method `max_load_factor()` which can be called to set the maximum load factor of the hashtable. The documentation says that the map will automatically rehash when it exceeds the load factor. The one issue is that some implementations of `unordered_map` have a maximum bucket count, which will cause the maximum load factor to be ignored if it is exceeded.
+We call `max_load_factor()` on our map in the constructor of the cache to set it to the appropriate value.
 ## Part 6: Eviction Policy
 ## Part 7: Extra Credit
