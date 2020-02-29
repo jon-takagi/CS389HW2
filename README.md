@@ -6,7 +6,7 @@
 Our cache uses an `unordered_map` as the underlying data type. Rather than directly storing key-value pairs in the map, we store key-(value-size) pairs. The `maxmem`, `size`, and `evictor` are stored as member variables, and the `max_load_factor` and `hasher` are members of the `unordered_map`
 
 ### Deconstructor
-Because of the way we create the `char*` in set, the memory must be freed using `delete[]`. The `reset` method also frees the memory allocated to the array, so to avoid duplicating code we call it in the destructor. There are no other members with non-trivial destructors, so no other code needs to be called.
+Because of the way we create the `char*` in the `set` method, the memory must be freed using `delete[]`. The `reset` method also frees the memory allocated to the array, so to avoid duplicating code we call it in the destructor. There are no other members with non-trivial destructors, so no other code needs to be called.
 
 ### Set
 In order to deep-copy the value into the cache when we `set` it, we must iterate over each character in the value and store it in the new value. Because variable sized arrays are illegal in C++, we instead create a pointer to a variable number of spaces on the heap, a very different construction. Since we allocated heap memory for the deep copy, we must free it but not until the key is `del`-ed.
@@ -38,4 +38,13 @@ Since we used `unordered_map` from the STL, the collision resolution was already
 The C++ standard library again handles this part of the project for us, as `unordered_map` simply has a method `max_load_factor()` which can be called to set the maximum load factor of the hashtable. The documentation says that the map will automatically rehash when it exceeds the load factor. The one issue is that some implementations of `unordered_map` have a maximum bucket count, which will cause the maximum load factor to be ignored if it is exceeded.
 We call `max_load_factor()` on our map in the constructor of the cache to set it to the appropriate value.
 ## Part 6: Eviction Policy
+The cache calls `touch` in `set` when it successfully adds an item to the queue. If `set` is used to overwrite a key, the key is duplicated inside of the evictor.
+If calling `set` would cause the cache to exceed the maximum size set, the evictor chooses keys to `del` until there is room for the new key. Since `del` simply returns false if the chosen key is not in the cache, there is no error if the evictor's chosen key was already removed. Instead, `del` returns false, and the loop continues until a sufficient number of keys have been deleted. Note that a cache with a maxmem of 0 will loop infinitely.
+
+### FIFO Evictor
+The `FifoEvictor` extends the given evictor class. Since we use the standard library `queue` object (with an underlying `list`) object, we don't need to do anything in the constructor or destructor.
+By using a FIFO queue as the underlying data structure, the logic is very straightforwards. Note that as `pop` is a void method to remove the front object from the queue, rather than returning the removed value, the `evict` method is longer than it would be otherwise.
+#### Asymptotic analysis
+The `std::list` underlying our evictor's queue is a doubly linked list. Insertions and access from the end are both constant time operations, and we never search the list. 
+### LRU Evictor
 ## Part 7: Extra Credit
