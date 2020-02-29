@@ -5,6 +5,7 @@
 #include <iostream>
 #include "catch.hpp"
 #include "cache.hh"
+#include "fifo_evictor.h"
 
 TEST_CASE("Testing Basic Cache Operations") //basic rejection
 {
@@ -87,7 +88,6 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
     }
 
     SECTION("Testing del"){
-
         auto test_cache = Cache(100);
         Cache::size_type size = 0;
         //Set up size to access; we expect this to remain unchanged since we are calling get for empty/non-existent entries
@@ -125,6 +125,26 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
         REQUIRE(test_cache.get("key_two", size) == nullptr);
         REQUIRE(test_cache.get("key_three", size) == nullptr);
         REQUIRE(test_cache.space_used() == 0);
+    }
+    SECTION("evictor") {
+        FifoEvictor evictor_obj = FifoEvictor();
+        FifoEvictor *evictor_ptr;
+        evictor_ptr = &evictor_obj;
+        auto test_cache = Cache(24, 0.75,evictor_ptr, std::hash<key_type>());
+        //
+        test_cache.set("key_one", "value_1", 8);
+        test_cache.set("key_two", "value_2", 8);
+        test_cache.set("key_three", "value_3", 8);
+        // std::cout << test_cache.space_used() << std::endl;
+        REQUIRE(test_cache.space_used() == 24);
+        test_cache.set("key_one", "value_4", 8);
+
+        test_cache.set("key_five", "value_5", 8);
+        Cache::size_type size = 0;
+        REQUIRE(test_cache.get("key_one", size) == nullptr);
+        test_cache.set("key_six", "value_6", 8);
+        REQUIRE(test_cache.get("key_two", size) == nullptr);
+        // test_cache.set("key_seven", "value_7", 8);
     }
 
 }

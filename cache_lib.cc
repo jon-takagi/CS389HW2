@@ -32,6 +32,7 @@ Cache::~Cache() {
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
 void Cache::set(key_type key, val_type val, size_type size) {
 // TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
+    pImpl_->evictor_->touch_key(key);
     if(pImpl_->dict_.find(key) != pImpl_->dict_.end()) {
         // std::cout << "overwriting existing key" << std::endl;
         del(key);
@@ -50,7 +51,9 @@ void Cache::set(key_type key, val_type val, size_type size) {
         pImpl_->size_ += size;
     } else {
         // handle evictions
-        // pImpl_->evictor_.do_stuff();
+        // std::cout << "evicting stuff" << std::endl;
+        del(pImpl_->evictor_->evict());
+        set(key, val, size);
     }
 }
 
