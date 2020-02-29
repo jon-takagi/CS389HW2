@@ -32,28 +32,32 @@ Cache::~Cache() {
 // Then copies by iterating over val to make new entry to put into pImpl_ dict
 void Cache::set(key_type key, val_type val, size_type size) {
 // TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
-    pImpl_->evictor_->touch_key(key);
+
     if(pImpl_->dict_.find(key) != pImpl_->dict_.end()) {
         // std::cout << "overwriting existing key" << std::endl;
         del(key);
     }
-    if(space_used() + size <= pImpl_->maxmem_){
-        byte_type *copy = new byte_type[size];
-        int i = 0;
-        while(val[i] != '\0'){ //Searching for null terminator
-            copy[i] = val[i];
-            i++;
-        }
-        val_type entry_val = copy;
-        pImpl_->dict_.insert(std::make_pair(key, std::make_pair(entry_val, size)));
-        // need to free copy
-        // delete[] pImpl_->dict_[key].second.first
-        pImpl_->size_ += size;
+
+    if(space_used() + size > pImpl_->maxmem_ && pImpl_->evictor_ == nullptr) {
+        return;
     } else {
-        // handle evictions
-        // std::cout << "evicting stuff" << std::endl;
-        del(pImpl_->evictor_->evict());
-        set(key, val, size);
+        while(space_used() + size > pImpl_->maxmem_) {
+            del(pImpl_->evictor_->evict());
+        }
+    }
+    byte_type *copy = new byte_type[size];
+    int i = 0;
+    while(val[i] != '\0'){ //Searching for null terminator
+        copy[i] = val[i];
+        i++;
+    }
+    val_type entry_val = copy;
+    pImpl_->dict_.insert(std::make_pair(key, std::make_pair(entry_val, size)));
+    // need to free copy
+    // delete[] pImpl_->dict_[key].second.first
+    pImpl_->size_ += size;
+    if(pImpl_->evictor_ != nullptr) {
+        pImpl_->evictor_->touch_key(key);
     }
 }
 

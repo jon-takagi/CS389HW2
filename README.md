@@ -35,4 +35,13 @@ The makefile we use is fairly boilerplate, however, due to time issues with my v
 ## Part 4: Collision Resolution
 ## Part 5: Dynamic Resizing
 ## Part 6: Eviction Policy
+The cache calls `touch` in `set` when it successfully adds an item to the queue. If `set` is used to overwrite a key, the key is duplicated inside of the evictor.
+If calling `set` would cause the cache to exceed the maximum size set, the evictor chooses keys to `del` until there is room for the new key. Since `del` simply returns false if the chosen key is not in the cache, there is no error if the evictor's chosen key was already removed. Instead, `del` returns false, and the loop continues until a sufficient number of keys have been deleted. Note that a cache with a maxmem of 0 will loop infinitely.
+
+### FIFO Evictor
+The `FifoEvictor` extends the given evictor class. Since we use the standard library `queue` object (with an underlying `list`) object, we don't need to do anything in the constructor or destructor.
+By using a FIFO queue as the underlying data structure, the logic is very straightforwards. Note that as `pop` is a void method to remove the front object from the queue, rather than returning the removed value, the `evict` method is longer than it would be otherwise.
+#### Asymptotic analysis
+The `std::list` underlying our evictor's queue is a doubly linked list. Insertions and access from the end are both constant time operations, and we never search the list. 
+### LRU Evictor
 ## Part 7: Extra Credit

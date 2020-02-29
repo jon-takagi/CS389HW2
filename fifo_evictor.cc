@@ -4,7 +4,7 @@
 #include <queue>
 #include <iostream>
 FifoEvictor::FifoEvictor() {
-    // std::cout << a << std::endl;
+
 }
 FifoEvictor::~FifoEvictor() {
 
