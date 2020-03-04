@@ -9,7 +9,7 @@
 
 using key_type = std::string;
 
-TEST_CASE("Testing Basic Cache Operations") //basic rejection
+TEST_CASE("Testing Basic Cache Operations") //Tests the basic parts of the cache
 {
 
     SECTION("Setting and Getting elements."){
@@ -128,73 +128,14 @@ TEST_CASE("Testing Basic Cache Operations") //basic rejection
         REQUIRE(test_cache.get("key_three", size) == nullptr);
         REQUIRE(test_cache.space_used() == 0);
     }
-    SECTION("evictor") {
-        FifoEvictor evictor_obj = FifoEvictor();
-        FifoEvictor *evictor_ptr;
-        evictor_ptr = &evictor_obj;
-        auto test_cache = Cache(24, 0.75,evictor_ptr, std::hash<key_type>());
-        //
-        test_cache.set("key_one", "value_1", 8);
-        test_cache.set("key_two", "value_2", 8);
-        test_cache.set("key_three", "value_3", 8);
-        // std::cout << test_cache.space_used() << std::endl;
-        REQUIRE(test_cache.space_used() == 24);
-        test_cache.set("key_one", "value_4", 8);
-
-        test_cache.set("key_five", "value_5", 8);
-        Cache::size_type size = 0;
-        REQUIRE(test_cache.get("key_one", size) == nullptr);
-        test_cache.set("key_six", "value_6", 8);
-        REQUIRE(test_cache.get("key_two", size) == nullptr);
-        // test_cache.set("key_seven", "value_7", 8);
-    }
 }
 
-TEST_CASE("Hash Function")
+TEST_CASE("Hash Function")//Making two hash functions and checking that the cache is actually calling them when set is used
 {
     
     std::vector<key_type> in_vec;
     std::vector<std::size_t> out_vec;
-    
-    /*
-    //We define a Functor to pass as the hash function, so that it can record when and what it is called with
-    //It keeps track of the inputs and outputs in arrays, so we can check that it was called, with the expected
-    //key and getting the expected result
-    class HashFunctor {
-        private:
-            Cache::hash_func function_;
-            std::vector<key_type> inputs_;
-            std::vector<std::size_t> outputs_;
-        public:
-            HashFunctor(Cache::hash_func func, std::vector<key_type>& inputs, std::vector<std::size_t>& outputs){
-                function_ = func;
-                inputs_ = inputs;
-                outputs_ = outputs;
-            }
-        
-            Cache::size_type operator () (key_type key){
-                auto ret = function_(key);
-                outputs_.push_back(ret);
-                inputs_.push_back(key);
-                auto k = inputs_.back();
-                std::cout << k<< std::endl;
-                return ret;
-            }
-            
-            //Get the last entry in outputs_, which should be the return of the most recent call
-            std::pair<key_type, std::size_t> most_recent(){
-                auto k = inputs_.front();
-                return std::make_pair(k, 1);
-                //return std::make_pair(inputs_.back(), outputs_.back());
-            }
-            
-            //test if either array is empty
-            bool is_empty(){
-                return (outputs_.empty() or inputs_.empty());
-            }
-    };
-    */
-    
+
     //First test, making a bad hash function that hashes everything to the same value
     std::function<std::size_t(key_type)> bad_hash = [&](key_type k) {
         in_vec.push_back(k); 
@@ -339,19 +280,3 @@ TEST_CASE("Eviction")
     }
     
 }
-
-
-//Test Eviction
-
-
-
-
-
-
-
-
-
-
-
-
-
