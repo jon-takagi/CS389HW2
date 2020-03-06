@@ -35,35 +35,16 @@ const key_type LruEvictor::evict() {
 }
 
 class LLNode {
-    private:
+    public:
         int age_;
         LLNode* front_;
         LLNode* rear_;
-    LLNode(int age) {
-        age_ = age;
-    }
-    LLNode(int age, LLNode* front, LLNode* rear) {
-        age_ = age;
-        front_ = front;
-        rear_ = rear;
-    }
-public:
-    int get_age() {
-        return age_;
-    }
-    LLNode* get_front() {
-        return front_;
-    }
-    LLNode* get_rear() {
-        return rear_;
-    }
-    void set_age(int age) {
-        age_ = age;
-    }
-    void set_front(LLNode* front) {
-        front_ = front;
-    }
-    void set_rear(LLNode* rear) {
-        rear_ = rear;
-    }
+        LLNode(int age) {
+            age_ = age;
+        }
+        LLNode(int age, LLNode* front, LLNode* rear) {
+            age_ = age;
+            front_ = front;
+            rear_ = rear;
+        }
 };
