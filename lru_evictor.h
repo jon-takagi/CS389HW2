@@ -6,7 +6,6 @@
 class LruEvictor:public Evictor {
     private:
         std::list<key_type> contents_;
-        std::unordered_map<key_type, node_type> lookup_;
     public:
         void touch_key(const key_type&);
         const key_type evict();
