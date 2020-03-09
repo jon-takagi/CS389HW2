@@ -63,6 +63,9 @@ void Cache::set(key_type key, val_type val, size_type size) {
 
 //Just assign the size to the reference that was passed, then return the value, both from the entry pair
 Cache::val_type Cache::get(key_type key, size_type& val_size) const {
+    if(pImpl_->evictor_ != nullptr) {
+        pImpl_->evictor_->touch_key(key);
+    }
     val_size = pImpl_->dict_[key].second;
     return pImpl_->dict_[key].first;
 }
