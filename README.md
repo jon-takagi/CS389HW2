@@ -1,4 +1,5 @@
-# Initial Commit
+# Systems Homework 2
+Jon Takagi and Eli Poppele
 
 ## Part 1: Basic operations
 
@@ -53,3 +54,5 @@ We only added an entry to the evictor when `set` was called with it, rather than
 #### Asymptotic analysis
 The `std::list` underlying our evictor's queue is a doubly linked list. Insertions and access from the end are both constant time operations, and we never search the list. Thus, cache operations remain O(1)
 ### LRU Evictor
+We have attempted the extra credit LRU evictor, implementing it with a double-linked list and a map. The list serves as a queue, with the first item being the least recently used. When a key is touched, the evictor moves that node of the list to the back, using the double-linked properties to connect the adjacent nodes together and remove the hole where that node used to be. The map (again using std unordered map) contains keys and pointers to that key's respective node in the list, and is then used to find an arbitrary node in the list in constant time. 
+The first issue that we ran into was that touch used a `const key&`, and the unordered map could not be created with a reference as a key. We have tried to fix this by making the LRU map take a non-ref key, and then just set the entry with `map_[key] = entry`, as opposed to using `insert`, but at present we have segfault issues. The tests and all the rest of the code for the evictor is written and in theory is functional, but until the tests will actually run, we can't guarantee any correctness.
